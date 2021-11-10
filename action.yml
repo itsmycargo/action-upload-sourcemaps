@@ -58,8 +58,8 @@ runs:
 
     - uses: aws-actions/amazon-ecr-login@v1
 
-    -run: mkdir dist
-    -run: docker cp ${{ inputs.repository }}/${{ github.sha }} /usr/share/nginx/html:dist
+    - run: mkdir dist
+    - run: docker cp ${{ inputs.repository }}/${{ github.sha }} /usr/share/nginx/html:dist
 
     - uses: getsentry/action-release@v1
       with:
