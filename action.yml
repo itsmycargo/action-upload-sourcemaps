@@ -6,8 +6,8 @@ branding:
   icon: layers
 
 inputs:
-  repository:
-    description: ECR Repository to use for Images
+  repository-tag:
+    description: Full tag for the image to be loaded
     required: true
   registry_password:
     description: “Password for image registry”
@@ -63,8 +63,8 @@ runs:
       shell: bash
     - id: build-copy-destroy-image
       run:
-        CID=$(docker create ${{ inputs.repository }}/${{ github.sha }})
-        docker cp ${CID}:/usr/share/nginx/html ./dist
+        CID=$(docker create ${{ inputs.repository-tag }})
+        docker cp ${CID}:${{ inputs.path }} ./dist
         docker rm ${CID}
       shell: bash
 
