@@ -58,9 +58,14 @@ runs:
 
     - uses: aws-actions/amazon-ecr-login@v1
 
-    - run: mkdir dist
+    - id: make-directory
+      run: mkdir dist
       shell: bash
-    - run: docker cp ${{ inputs.repository }}/${{ github.sha }} /usr/share/nginx/html:dist
+    - id: build docker image, copy files and remove docker image
+      run:
+        CID=$(docker create ${{ inputs.repository }}/${{ github.sha }})
+        docker cp ${CID}:/usr/share/nginx/html ./dist
+        docker rm ${CID}
       shell: bash
 
     - uses: getsentry/action-release@v1
