@@ -61,11 +61,22 @@ runs:
     - id: make-directory
       run: mkdir dist
       shell: bash
-    - id: build-copy-destroy-image
+
+    - id: create-container
       run:
-        CID=$(docker create ${{ inputs.repository-tag }})
-        docker cp ${CID}:${{ inputs.path }} ./dist
-        docker rm ${CID}
+        docker create --name=temp_docker ${{ inputs.repository-tag }}
+      shell: bash
+
+    - id: copy-source-files
+      run:
+        docker cp temp_docker:${{ inputs.path }} ./dist
+      shell: bash
+
+    - id: destroy-container
+      run:
+        docker create --name=temp_docker ${{ inputs.repository-tag }} &&
+        docker cp temp_docker:${{ inputs.path }} ./dist &&
+        docker rm temp_docker
       shell: bash
 
     - uses: getsentry/action-release@v1
