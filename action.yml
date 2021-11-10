@@ -1,0 +1,53 @@
+name: Publish Sourcemaps to Sentry
+description: Copy sourcemaps from docker image and publish to Sentry under the images relase tag.
+author: itsmycargo
+branding:
+  color: blue
+  icon: layers
+
+inputs:
+  repository:
+    description: ECR Repository to use for Images
+    required: true
+  registry_password:
+    description: “Password for image registry”
+    required: true
+  aws-access-key-id:
+    description: AWS Access Key ID for login and pushing to ECR Repository
+    required: true
+  aws-secret-access-key:
+    description: AWS Access Key for login and pushing to ECR Repository
+    required: true
+  aws-region:
+    description: AWS Region for ECR Repository
+    required: true
+  path:
+    description: Path in the image where the sourcemaps can be found
+    required: true
+
+outputs:
+  release:
+    description: Sentry Release
+    value: ${{ steps.meta.outputs.release }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: meta
+      uses: itsmycargo/docker-meta-action@main
+      with:
+        repository: ${{ inputs.repository }}
+
+    - uses: actions/checkout@v2
+    - uses: docker/setup-qemu-action@v1
+
+    - uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - uses: aws-actions/amazon-ecr-login@v1
+
+    -run: mkdir dist
+    -run: docker cp ${{ inputs.repository }}/${{ github.sha }} /usr/share/nginx/html:dist
