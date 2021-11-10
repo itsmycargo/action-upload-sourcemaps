@@ -42,11 +42,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - id: meta
-      uses: itsmycargo/docker-meta-action@main
-      with:
-        repository: ${{ inputs.repository }}
-
     - uses: actions/checkout@v2
     - uses: docker/setup-qemu-action@v1
 
