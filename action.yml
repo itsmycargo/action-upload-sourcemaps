@@ -74,8 +74,6 @@ runs:
 
     - id: destroy-container
       run:
-        docker create --name=temp_docker ${{ inputs.repository-tag }} &&
-        docker cp temp_docker:${{ inputs.path }} ./dist &&
         docker rm temp_docker
       shell: bash
 
