@@ -61,7 +61,7 @@ runs:
     - id: make-directory
       run: mkdir dist
       shell: bash
-    - id: build docker image, copy files and remove docker image task
+    - id: build-copy-destroy-image
       run:
         CID=$(docker create ${{ inputs.repository }}/${{ github.sha }})
         docker cp ${CID}:/usr/share/nginx/html ./dist
