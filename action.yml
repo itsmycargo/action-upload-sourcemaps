@@ -24,6 +24,15 @@ inputs:
   path:
     description: Path in the image where the sourcemaps can be found
     required: true
+  sentry-auth-token:
+    description: Token for authenticating with Sentry.io
+    required: true
+  sentry-org:
+    description: Name of the organization in Sentry.io
+    required: true
+  sentry-project:
+    description: Name of the project in Sentry.io
+    required: true
 
 outputs:
   release:
@@ -51,3 +60,11 @@ runs:
 
     -run: mkdir dist
     -run: docker cp ${{ inputs.repository }}/${{ github.sha }} /usr/share/nginx/html:dist
+
+    - uses: getsentry/action-release@v1
+      with:
+        sourcemaps: './dist'
+      env:
+        SENTRY_AUTH_TOKEN: ${{ inputs.sentry-auth-token }}
+        SENTRY_ORG: ${{ inputs.sentry-org }}
+        SENTRY_PROJECT: ${{ inputs.sentry-project }}
